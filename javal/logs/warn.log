@@ -1,0 +1,8 @@
+[ERROR]-2019-08-27 exp.捕获.<init>(捕获.java:16) java.lang.ArithmeticException: / by zero
+	at exp.捕获.<init>(捕获.java:14)
+	at exp.捕获.main(捕获.java:32)
+
+[ERROR]-2019-08-27 exp.捕获.<init>(捕获.java:16) java.lang.ArithmeticException: / by zero
+	at exp.捕获.<init>(捕获.java:14)
+	at exp.捕获.main(捕获.java:32)
+

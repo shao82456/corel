@@ -1,0 +1,24 @@
+--2019-11-11 15:42:22--  http://www.quotationspage.com/qotd.html
+Resolving www.quotationspage.com (www.quotationspage.com)... 74.208.47.119
+Connecting to www.quotationspage.com (www.quotationspage.com)|74.208.47.119|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: ‘qotd.html.1’
+
+     0K .......... ...                                         1.58M=0.008s
+
+2019-11-11 15:42:22 (1.58 MB/s) - ‘qotd.html.1’ saved [13355]
+
+--2019-11-11 15:42:22--  http://www.quotationspage.com/qotd.html
+Reusing existing connection to www.quotationspage.com:80.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: ‘qotd.html.2’
+
+     0K .......... ...                                         6.51K=2.0s
+
+2019-11-11 15:42:24 (6.51 KB/s) - ‘qotd.html.2’ saved [13355]
+
+FINISHED --2019-11-11 15:42:24--
+Total wall clock time: 2.6s
+Downloaded: 2 files, 26K in 2.0s (13.0 KB/s)

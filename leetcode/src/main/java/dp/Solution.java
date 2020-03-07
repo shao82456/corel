@@ -1,0 +1,750 @@
+package dp;
+
+import offer.TreeNode;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+public class Solution {
+    /***
+     * #300 dp经典解法
+     * 初始状态dp[i]=1，表示每个数都是一个子序列
+     * dp[i]表示从首元素到当前元素i，存在的最长上升子序列的长度
+     * 对于j=[0,i-1],如果nums[i]>nums[j];则dp[i]=dp[j]+1，dp[i]在遍历过程中变化，保留最大的
+     * 最后从i=[0,n)中，选dp[i]最大的
+     * @param nums
+     * @return
+     */
+    public int lengthOfLIS(int[] nums) {
+        if (nums.length < 2) return nums.length;
+        int[] dp = new int[nums.length];
+        for (int i = 0; i < dp.length; i++)
+            dp[i] = 1;
+
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j])
+                    dp[i] = Integer.max(dp[i], dp[j] + 1);
+            }
+        }
+
+        int res = 1;
+        for (int len : dp)
+            res = Integer.max(res, len);
+        return res;
+    }
+
+    /***
+     * #300 暴力回溯
+     */
+    public int lengthOfLIS1(int[] nums) {
+        return lengthOfLIS1(nums, Integer.MIN_VALUE, 0);
+    }
+
+    /***
+     * 求curpos开始，上一个元素是prev，到数组的最后为止，其中的最长上升子序列的长度
+     * 递归树接近于完全二叉树，但是由于nums[curpos]不一定大于prev，故在某些节点只有一个分支
+     * @param nums
+     * @param prev
+     * @param curpos
+     * @return
+     */
+    private int lengthOfLIS1(int[] nums, int prev, int curpos) {
+        if (curpos == nums.length) return 0;
+
+        int taken = -1, notaken;
+        if (nums[curpos] > prev)
+            taken = 1 + lengthOfLIS1(nums, nums[curpos], curpos + 1);
+        notaken = lengthOfLIS1(nums, prev, curpos + 1);
+        return Integer.max(taken, notaken);
+    }
+
+    /***
+     * #300 记忆化搜索优化回溯
+     */
+    public int lengthOfLIS2(int[] nums) {
+        int[][] memo = new int[nums.length + 1][nums.length];
+        for (int[] l : memo)
+            Arrays.fill(l, -1);
+        return lengthOfLIS2(nums, -1, 0, memo);
+    }
+
+    private int lengthOfLIS2(int[] nums, int prepos, int curpos, int[][] memo) {
+        if (curpos == nums.length) return 0;
+        if (memo[prepos + 1][curpos] == -1) {
+            int taken = -1, notaken;
+            if (prepos < 0 || nums[curpos] > nums[prepos])
+                taken = 1 + lengthOfLIS1(nums, nums[curpos], curpos + 1);
+
+            notaken = lengthOfLIS1(nums, prepos, curpos + 1);
+            memo[prepos + 1][curpos] = Integer.max(taken, notaken);
+        }
+        return memo[prepos + 1][curpos];
+    }
+
+    /**
+     * 62. Unique Paths
+     */
+    public int uniquePaths(int m, int n) {
+        return uniquePaths(m, n, 0, 0);
+    }
+
+    private int uniquePaths(int m, int n, int i, int j) {
+        if (i == m - 1 && j == n - 1) return 1;
+        int all = 0;
+        if (i + 1 < m)
+            all += uniquePaths(m, n, i + 1, j);
+        if (j + 1 < n)
+            all += uniquePaths(m, n, i, j + 1);
+        return all;
+    }
+
+    /**
+     * memory search
+     *
+     * @param m
+     * @param n
+     * @return
+     */
+    public int uniquePaths1(int m, int n) {
+        int[][] memo = new int[m][n];
+        for (int[] l : memo)
+            Arrays.fill(l, -1);
+        memo[m - 1][n - 1] = 1;
+
+        return uniquePaths1(m, n, 0, 0, memo);
+    }
+
+    private int uniquePaths1(int m, int n, int i, int j, int[][] memo) {
+        if (memo[i][j] == -1) {
+            int all = 0;
+            if (i + 1 < m) {
+                if (memo[i + 1][j] == -1)
+                    memo[i + 1][j] = uniquePaths1(m, n, i + 1, j, memo);
+                all += memo[i + 1][j];
+            }
+            if (j + 1 < n) {
+                if (memo[i][j + 1] == -1)
+                    memo[i][j + 1] = uniquePaths1(m, n, i, j + 1, memo);
+                all += memo[i][j + 1];
+            }
+            memo[i][j] = all;
+        }
+        return memo[i][j];
+    }
+
+    public int uniquePaths2(int m, int n) {
+        if (m == 0 || n == 0) return 0;
+        int[][] dp = new int[m][n];
+        Arrays.fill(dp[m - 1], 1);
+        for (int i = 0; i < m; i++)
+            dp[i][n - 1] = 1;
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--)
+                dp[i][j] = dp[i + 1][j] + dp[i][j + 1];
+        }
+
+        return dp[0][0];
+    }
+
+    /***
+     * 63. Unique Paths II
+     * ruguo local[i][j] has obstacle,then we get from local[i][j] we have no path to arrive final place
+     */
+
+    public int uniquePathsII(int[][] obstacleGrid) {
+        int m = obstacleGrid.length, n = obstacleGrid[0].length;
+        int[][] dp = new int[m][n];
+        dp[m - 1][n - 1] = obstacleGrid[m - 1][n - 1] == 1 ? 0 : 1;
+
+        for (int j = n - 2; j >= 0; j--) {
+            if (obstacleGrid[m - 1][j] == 0)
+                dp[m - 1][j] = dp[m - 1][j + 1];
+        }
+
+        for (int i = m - 2; i >= 0; i--) {
+            if (obstacleGrid[i][n - 1] == 0)
+                dp[i][n - 1] = dp[i + 1][n - 1];
+        }
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--)
+                if (obstacleGrid[i][j] == 0)
+                    dp[i][j] = dp[i + 1][j] + dp[i][j + 1];
+        }
+
+        return dp[0][0];
+    }
+
+
+    /**
+     * 980. Unique Paths III
+     * dfs版本
+     */
+
+    int res980 = 0;
+    int left = 0;
+    final int[][] direct = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
+    int sti = -1, stj = -1;
+    int edi = -1, edj = -1;
+
+    public int uniquePathsIII(int[][] grid) {
+        if (null == grid || grid.length == 0 || grid[0].length == 0)
+            return 0;
+
+        boolean[][] canVisit = new boolean[grid.length][grid[0].length];
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] != -1) {
+                    canVisit[i][j] = true;
+                    left++;
+                }
+                if (grid[i][j] == 1) {
+                    sti = i;
+                    stj = j;
+                }
+                if (grid[i][j] == 2) {
+                    edi = i;
+                    edj = j;
+                }
+            }
+        }
+        res980 = 0;
+        dfs(grid, direct, canVisit, sti, stj);
+        return res980;
+    }
+
+    private void dfs(int[][] grid, int[][] direct, boolean[][] canVisit, int curi, int curj) {
+        System.out.println(curi + "," + curj + ":" + left);
+        if (curi == edi && curj == edj) {
+            if (left == 1) res980++;
+            return;
+        }
+        for (int d = 0; d < 4; d++) {
+            int nexti = curi + direct[d][0];
+            int nextj = curj + direct[d][1];
+            if (nexti >= 0 && nexti < grid.length && nextj >= 0 && nextj < grid[0].length &&
+                    canVisit[nexti][nextj]) {
+
+                canVisit[curi][curj] = false;
+                left--;
+                dfs(grid, direct, canVisit, nexti, nextj);
+                canVisit[curi][curj] = true;
+                left++;
+            }
+        }
+    }
+
+    /***
+     * 64 Minimum path sum
+     * @param grid
+     * @return
+     */
+    public int minPathSum(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        int[][] dp = new int[m][n];
+        dp[m - 1][n - 1] = grid[m - 1][n - 1];
+
+        for (int j = n - 2; j >= 0; j--) {
+            dp[m - 1][j] = grid[m - 1][j] + dp[m - 1][j + 1];
+        }
+
+        for (int i = m - 2; i >= 0; i--) {
+            dp[i][n - 1] = grid[i][n - 1] + dp[i + 1][n - 1];
+        }
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--)
+                dp[i][j] = grid[i][j] + Math.min(dp[i + 1][j], dp[i][j + 1]);
+        }
+
+        return dp[0][0];
+    }
+
+    /**
+     * 32 最长有效括号
+     *
+     * @param s
+     * @return
+     */
+    public int longestValidParentheses(String s) {
+        if (s.length() < 2) return 0;
+        LinkedList<Integer> stk = new LinkedList<>();
+        stk.add(-1);
+        int res = 0, cur = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stk.push(i);
+            } else if (!stk.isEmpty()) {
+                if (stk.peek() == -1)
+                    res = Math.max(res, i + 1);
+                else {
+                    int border = stk.pop();
+                    res = Math.max(res, i - border);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 198. House Robber
+     *
+     * @param nums
+     * @return
+     */
+    int robtest = 0;
+
+    public int rob(int[] nums) {
+        int[] memo = new int[nums.length + 1];
+        Arrays.fill(memo, -1);
+        memo[memo.length - 1] = 0;
+        memo[memo.length - 2] = nums[nums.length - 1];
+
+        int res = rob1(nums, 0, memo);
+        System.out.println("total " + robtest);
+        return res;
+    }
+
+    /***
+     * 从此分析得出结论，采用记忆化搜索是可以将2^N的复杂度将为N,但是实际将降到多少还是看题目
+     * @param nums
+     * @param i
+     * @param memo
+     * @return
+     */
+    private int rob1(int[] nums, int i, int[] memo) {
+        robtest++;
+        System.out.println(i);
+        if (memo[i] == -1) {
+            int rob = nums[i];
+            if (memo[i + 2] != -1) rob += memo[i + 2];
+            else rob += rob1(nums, i + 2, memo);
+            int nrob;
+            if (memo[i + 1] != -1) nrob = memo[i + 1];
+            else nrob = rob1(nums, i + 1, memo);
+            memo[i] = Math.max(rob, nrob);
+        }
+        return memo[i];
+    }
+
+    /**
+     * dp解决
+     *
+     * @param nums
+     * @return
+     */
+    public int rob2(int[] nums) {
+        if (null == nums || nums.length == 0)
+            return 0;
+
+        int[] dp = new int[nums.length + 1];
+        dp[dp.length - 1] = 0;
+        dp[dp.length - 2] = nums[nums.length - 1];
+
+        for (int i = dp.length - 3; i >= 0; i--)
+            dp[i] = Math.max(dp[i + 1], dp[i + 2] + nums[i]);
+        return dp[0];
+    }
+
+    /**
+     * 213. House Robber II
+     * 这个题一开始我是想取出除了首位的部分，进行普通dp,求得dp[1]~dp[n-2]的值，然后考虑三种情况
+     * 1 不选头和尾
+     * 2 选首，res=dp[0+2]+nums[i]
+     * 3 选尾, res=....，此时突然发现这个想法不行，除非再计算一个dp[1]~dp[n-1]的值
+     * 后来突然想到，直接分别求去首的普通dp和去尾的普通dp，然后取最大的即可
+     * 去尾的普通dp包括了抢第一个房子和不抢第一个房子的情况，但是肯定没有抢最后一个
+     * 去首的普通dp包括了抢最后一个和不抢最后一个，但是肯定不会抢第一个
+     * 于是二者的最大值就可能是
+     * 1.抢了第一个，不抢最后一个
+     * 2.不抢一个，但抢最后一个
+     * 3.由于房子排列的原因，两个都没抢。
+     *
+     * @param nums
+     * @return
+     */
+    public int robII(int[] nums) {
+        if (null == nums || nums.length == 0)
+            return 0;
+        if (nums.length == 1)
+            return nums[0];
+
+        int[] num1 = Arrays.copyOfRange(nums, 0, nums.length - 1);
+        int[] num2 = Arrays.copyOfRange(nums, 1, nums.length);
+        return Math.max(rob2(num1), rob2(num2));
+
+    }
+
+    /***
+     * 337. House Robber III
+     * @param root
+     * @return
+     */
+    public int robIII(TreeNode root) {
+        if (root == null) return 0;
+        HashMap<TreeNode, Integer> memo = new HashMap<>();
+        return rob1(root, memo);
+    }
+
+    public int rob1(TreeNode root, HashMap<TreeNode, Integer> memo) {
+        if (root == null) return 0;
+        if (!memo.containsKey(root)) {
+            int go = root.val;
+            if (null != root.left) {
+                go += rob1(root.left.left, memo);
+                go += rob1(root.left.right, memo);
+            }
+            if (null != root.right) {
+                go += rob1(root.right.left, memo);
+                go += rob1(root.right.right, memo);
+            }
+
+            int notgo = 0;
+            notgo += rob1(root.left, memo);
+            notgo += rob1(root.right, memo);
+
+            memo.put(root, Math.max(go, notgo));
+        }
+        return memo.get(root);
+    }
+
+    /***
+     * 279. Perfect Squares
+     * 用最少的平方数组成一个数
+     * 思路，能选的数为1...sqr(n)，由于能选一，因此贪心可以求出解，但不是最优解
+     * ｄp:对于每个数，都只有两个状态，即选和不选
+     * 自顶向下递归求解
+     * @param n
+     * @return
+     */
+    public int numSquares(int n) {
+        return numSquares1(n, 1);
+    }
+
+    private int numSquares1(int n, int k) {
+        int k2 = k * k;
+        if (k2 > n) return Integer.MAX_VALUE - 1;
+        else if (k2 == n) return 1;
+        else return Math.min((1 + numSquares1(n - k2, k)), (numSquares1(n, k + 1)));
+    }
+
+    /**
+     * dp版,申请二维数组，填表即可，可以优化到一维
+     * @param n
+     * @return
+     */
+//    public int numSquares2(int n) {
+//
+//
+//    }
+
+    /**
+     * 983. Minimum Cost For Tickets
+     *
+     * @param days
+     * @param costs
+     * @return
+     */
+    public int mincostTickets(int[] days, int[] costs) {
+        if (null == days || days.length == 0) return 0;
+        int res = mincostTickets(days, costs, 0);
+        return res;
+    }
+
+    /**
+     * 这个函数表示在当前天要买票（因为没有票覆盖到这一天），可以选择买三种票，1d,7d,30d
+     *
+     * @param days
+     * @param costs
+     * @param k     当期日期索引
+     * @return 表示cover从当前天到最后一天最少需要的票钱
+     */
+    private int mincostTickets(int[] days, int[] costs, int k) {
+        if (k == days.length - 1)
+            return Math.min(costs[0], Math.min(costs[1], costs[2]));
+        int buyt1 = costs[0] + mincostTickets(days, costs, k + 1);
+
+        int lastday = days[days.length - 1];
+        int buyt2 = costs[1];
+        if (lastday >= days[k] + 7) {
+            int nextk = k + 1;
+            while (days[nextk] < days[k] + 7) nextk++;
+            buyt2 += mincostTickets(days, costs, nextk);
+        }
+        int buyt3 = costs[2];
+        if (lastday >= days[k] + 30) {
+            int nextk = k + 1;
+            while (days[nextk] < days[k] + 30) nextk++;
+            buyt3 += mincostTickets(days, costs, nextk);
+        }
+        return Math.min(buyt1, Math.min(buyt2, buyt3));
+    }
+
+    /**
+     * dp解法，同时直接保存356天数据，避免对计算到底能覆盖到哪天
+     *
+     * @param days
+     * @param costs
+     * @return
+     */
+    public int mincostTickets2(int[] days, int[] costs) {
+        if (null == days || days.length == 0) return 0;
+        int[] dp = new int[366 + 30];
+        int lastday = days[days.length - 1];
+        dp[lastday] = Math.min(costs[0], Math.min(costs[1], costs[2]));
+
+        int k = days.length - 2; // k表示存在的那天的下表
+        for (int i = lastday - 1; i >= 1; i--) {
+            //days[k]表示要计算的那天的日期
+            //如果当前日期和要计算的日期相等，就计算，否则，就赋值为后面那天的值
+            if (k >= 0 && i == days[k]) {
+                int buy1 = costs[0] + dp[i + 1];
+                int buy2 = costs[1] + dp[i + 7];
+                int buy3 = costs[2] + dp[i + 30];
+                dp[i] = Math.min(buy1, Math.min(buy2, buy3));
+                k--; //找下一天
+            } else
+                dp[i] = dp[i + 1];
+        }
+        return dp[1];
+    }
+
+    /**
+     * 263. Ugly Number
+     */
+
+
+    /**
+     * 698. Partition to K Equal Sum Subsets
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        if (sum % k != 0) {
+            return false;
+        }
+        int[] subsum = new int[k];
+        boolean res = canPartitionKSubsets(0, nums, subsum, sum / k);
+        return res;
+    }
+
+    private boolean canPartitionKSubsets(int i, int[] nums, int[] subsum, int subtarget) {
+        if (i == nums.length) {
+            for (int j = 0; j < subsum.length; j++) {
+                if (subsum[j] != subtarget) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (int j = 0; j < subsum.length; j++) {
+                if (subsum[j] + nums[i] <= subtarget) {
+                    subsum[j] += nums[i];
+                    if (canPartitionKSubsets(i + 1, nums, subsum, subtarget)) {
+                        return true;
+                    } else {
+                        subsum[j] -= nums[i];
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    /*5. Longest Palindromic Substring
+     * 先试下暴力搜索*/
+    public String longestPalindrome(String s) {
+        int res = 0;
+        String resStr = "";
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = i; j < s.length(); j++) {
+                if (isPalindrome(s, i, j) && (j - i + 1) > res) {
+                    res = (j - i + 1);
+                    resStr = s.substring(i, j + 1);
+                }
+            }
+        }
+        return resStr;
+    }
+
+    public boolean isPalindrome(String s, int i, int j) {
+        int m = (i + j) / 2;
+        int right = j;
+        for (int left = i; left <= m; left++) {
+            if (s.charAt(right) == s.charAt(left)) {
+                right--;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*动态规划，递推式f(i,j)=f(i+1,j-1)&&s[i]==s[j],其中i+1<j
+     * 初值f(i,j) 其中i==j||i+1==j*/
+    public String longestPalindromeII(String s) {
+        if (s.length() <= 1) {
+            return s;
+        }
+        boolean[][] memo = new boolean[s.length()][s.length()];
+        int res = 1;
+        int startPox = 0;
+        for (int i = 0; i < s.length() - 1; i++) {
+            memo[i][i] = true;
+            if (s.charAt(i) == s.charAt(i + 1)) {
+                memo[i][i + 1] = true;
+                res = 2;
+                startPox = i;
+            }
+        }
+        if (s.length() == 2) {
+            return s.substring(startPox, res);
+        }
+        for (int i = s.length() - 3; i >= 0; i--) {
+            for (int j = i + 2; j < s.length(); j++) {
+                memo[i][j] = memo[i + 1][j - 1] && s.charAt(i) == s.charAt(j);
+                if (memo[i][j] && (j - i + 1) > res) {
+                    res = (j - i + 1);
+                    startPox = i;
+                }
+            }
+        }
+        return s.substring(startPox, startPox + res);
+    }
+
+    public int minCostClimbingStairs(int[] cost) {
+        if (cost.length < 2) {
+            return cost[0];
+        }
+        int[] data = new int[cost.length + 1];
+        data[0] = 0;
+        data[1] = 0;
+        for (int i = 2; i <= cost.length; i++) {
+            data[i] = Math.min(data[i - 1] + cost[i - 1], data[i - 2] + cost[i - 2]);
+        }
+        return data[cost.length];
+    }
+
+    /*85. Maximal Rectangle
+     * 动态规划+剪枝+枚举*/
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix.length == 0) return 0;
+        int[][] memo = new int[matrix.length][matrix[0].length];
+        int res = 0;
+        for (int m = 0; m < matrix.length; m++) {
+            for (int n = 0; n < matrix[0].length; n++) {
+                //搜索以(m,n)为左对角，(i,j)为右对角的矩阵
+                if (matrix[m][n] == '1') {
+                    memo[m][n] = 1;
+                    res = Math.max(res, memo[m][n]);
+                    for (int j = n + 1; j < matrix[0].length && matrix[m][j] == '1'; j++) {
+                        memo[m][j] = memo[m][j - 1] + 1;
+                        res = Math.max(res, memo[m][j]);
+                    }
+                    for (int i = m + 1; i < matrix.length && matrix[i][n] == '1'; i++) {
+                        memo[i][n] = memo[i - 1][n] + 1;
+                        res = Math.max(res, memo[i][n]);
+                    }
+                    for (int i = m + 1; i < matrix.length; i++) {
+                        for (int j = n + 1; j < matrix[0].length && memo[i][j - 1] > 0; j++) {
+                            if (matrix[i][j] == '1' && memo[i][j - 1] > 0 && memo[i - 1][j] > 0) {
+                                memo[i][j] = (j - n + 1) * (i - m + 1);
+                                res = Math.max(res, memo[i][j]);
+                            } else {
+                                memo[i][j] = 0;
+                            }
+                        }
+                        if (n + 1 < matrix[0].length && memo[i][n + 1] == 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if (s3.length() != s1.length() + s2.length()) {
+            return false;
+        }
+        int m = s1.length(), n = s2.length();
+        boolean[][] memo = new boolean[m + 1][n + 1];
+        for (int j = 0; j <= n; j++) {
+            memo[m][j] = s2.substring(j).equals(s3.substring(getK(m, j)));
+        }
+        for (int i = 0; i <= m; i++) {
+            memo[i][n] = s1.substring(i).equals(s3.substring(getK(i, n)));
+        }
+//        System.out.println(Arrays.deepToString(memo));
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                memo[i][j] = (s3.charAt(getK(i, j)) == s1.charAt(i) && memo[i + 1][j]) || (s3.charAt(getK(i, j)) == s2.charAt(j) && memo[i][j + 1]);
+            }
+        }
+//        System.out.println(Arrays.deepToString(memo));
+        return memo[0][0];
+    }
+
+    private int getK(int i, int j) {
+        return i + j;
+    }
+
+    public boolean wordBreak(String s, List<String> wordDict) {
+        boolean[] memo = new boolean[s.length() + 1];
+        memo[s.length()] = true;
+        for (int i = memo.length - 1; i >= 0; i--) {
+            for (String part : wordDict) {
+                if (i + part.length() < memo.length && memo[i + part.length()]) {
+                    if (s.substring(i, i + part.length()).equals(part)) {
+                        memo[i] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return memo[0];
+    }
+
+    /*10. Regular Expression Matching*/
+    public boolean isMatch(String s, String p) {
+        int n = s.length(), m = p.length();
+        boolean[][] memo = new boolean[n + 1][m + 1];
+        /*initialize memo*/
+        memo[n][m] = true;
+        for (int i = 0; i < n; i++) {
+            memo[i][m] = false;
+        }
+        for (int j = m - 1; j >= 0; j--) {
+            if (j + 1 < m && p.charAt(j + 1) == '*') {
+                memo[n][j] = memo[n][j + 2];
+            } else {
+                memo[n][j] = false;
+            }
+        }
+        /*dp*/
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = m - 1; j >= 0; j--) {
+                boolean firstMatch = s.charAt(i) == p.charAt(j) || p.charAt(j) == '.';
+                if (j + 1 < m && p.charAt(j + 1) == '*') {
+                    memo[i][j] = memo[i][j + 2] || (firstMatch && memo[i + 1][j]);
+                } else {
+                    memo[i][j] = firstMatch && memo[i + 1][j + 1];
+                }
+            }
+        }
+        return memo[0][0];
+    }
+}
+
