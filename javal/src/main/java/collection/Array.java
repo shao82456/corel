@@ -1,6 +1,8 @@
 package collection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 class SomeThing{
@@ -19,6 +21,12 @@ public class Array {
             System.out.println(someThings[i]==someThings1[i]);
     }
     public static void main(String[] args) {
-        testArayCopy();
+//        testArayCopy();
+        List<Integer> ls=new ArrayList<>();
+        ls.addAll(Arrays.asList(1,2,3,4));
+        Iterator<Integer> it=ls.iterator();
+        while (it.hasNext()){
+            System.out.println(it.next());
+        }
     }
 }

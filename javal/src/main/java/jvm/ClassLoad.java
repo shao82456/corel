@@ -16,6 +16,8 @@ package jvm;
 public class ClassLoad {
     public static void main(String[] args) throws InterruptedException {
         System.out.println(args.length);
+//        this.getClass();
+//        new ClassLoader
         bootstrapClassLoader();
         Thread.sleep(300000);
     }
