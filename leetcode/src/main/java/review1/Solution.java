@@ -211,7 +211,7 @@ Explanation: 342 + 465 = 807.
         }
         int firstIdx = neg ? 1 : 0;
         int res = 0;
-        for (int i=firstIdx;i<str.length();i++) {
+        for (int i = firstIdx; i < str.length(); i++) {
             int num = str.charAt(i) - '0';
             if (num >= 0 && num <= 9) {
                 if (neg) {
@@ -239,22 +239,24 @@ Explanation: 342 + 465 = 807.
      * 1从一个的字符串的首个字符开始，遍历剩下的所有的字符串，比较首个字符是否一致，
      * 如果一致，继续判断下一个字符。直到其中某个字符串为空或是字符不等为止
      * 时间复杂度o(m*n) m为最短字符串的长度，n是字符串个数
-     *
+     * <p>
      * 2.分治法,将数组分成两份，分别得出两个最长的公共前缀，这两个前缀的最长公共前缀就是
      * 整个数组的最长公共前缀
      * 时间复杂度递推式T(n)=2T(n/2)+O(m) m是最短的字符串的长度，在最坏情况下，所有字符串的长度都是m
+     * 时间复杂度o(m*n)
+     *
      * @param strs
      * @return
      */
     public String longestCommonPrefix(String[] strs) {
-        if(strs.length==0){
+        if (strs.length == 0) {
             return "";
         }
-        for(int i=0;i<strs[0].length();i++){
-            char c=strs[0].charAt(i);
-            for(int j=1;j<strs.length;j++){
-                if(i==strs[j].length()||strs[j].charAt(i)!=c){
-                    return strs[0].substring(0,i);
+        for (int i = 0; i < strs[0].length(); i++) {
+            char c = strs[0].charAt(i);
+            for (int j = 1; j < strs.length; j++) {
+                if (i == strs[j].length() || strs[j].charAt(i) != c) {
+                    return strs[0].substring(0, i);
                 }
             }
         }
@@ -262,35 +264,35 @@ Explanation: 342 + 465 = 807.
     }
 
     public String longestCommonPrefix2(String[] strs) {
-        if(strs.length==0){
+        if (strs.length == 0) {
             return "";
         }
-        for(int i=0;i<strs[0].length();i++){
-            char c=strs[0].charAt(i);
-            for(int j=1;j<strs.length;j++){
-                if(i==strs[j].length()||strs[j].charAt(i)!=c){
-                    return strs[0].substring(0,i);
+        for (int i = 0; i < strs[0].length(); i++) {
+            char c = strs[0].charAt(i);
+            for (int j = 1; j < strs.length; j++) {
+                if (i == strs[j].length() || strs[j].charAt(i) != c) {
+                    return strs[0].substring(0, i);
                 }
             }
         }
         return strs[0];
     }
 
-    private String _longestCommonPrefix2(String[] strs,int l,int r){
-        if(l==r){
+    private String _longestCommonPrefix2(String[] strs, int l, int r) {
+        if (l == r) {
             return strs[l];
         }
-        int mid=(l+r)/2;
-        String left=_longestCommonPrefix2(strs,l,mid);
-        String right=_longestCommonPrefix2(strs,mid+1,r);
-        return _longestCommonPrefix2(left,right);
+        int mid = (l + r) / 2;
+        String left = _longestCommonPrefix2(strs, l, mid);
+        String right = _longestCommonPrefix2(strs, mid + 1, r);
+        return _longestCommonPrefix2(left, right);
     }
 
-    private String _longestCommonPrefix2(String a,String b){
-        for(int i=0;i<a.length();i++) {
-            char c=a.charAt(i);
-            if(i==b.length()||b.charAt(i)!=c){
-                return a.substring(0,i);
+    private String _longestCommonPrefix2(String a, String b) {
+        for (int i = 0; i < a.length(); i++) {
+            char c = a.charAt(i);
+            if (i == b.length() || b.charAt(i) != c) {
+                return a.substring(0, i);
             }
         }
         return a;
@@ -303,22 +305,24 @@ Explanation: 342 + 465 = 807.
      * ，目前还没有好的去重方式
      * 2.固定第一个数，然后twoSum的方式
      * 时间复杂度O(n^3)
+     *
      * @param nums
      * @return
      */
+    //下面的思路是错误的
     public List<List<Integer>> threeSum(int[] nums) {
-        Set<Integer> set=new HashSet<>();
-        for(int num:nums){
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
             set.add(num);
         }
-        Integer[] distinctedNums=set.toArray(new Integer[0]);
+        Integer[] distinctedNums = set.toArray(new Integer[0]);
         System.out.println(Arrays.toString(distinctedNums));
-        List<List<Integer>> res=new ArrayList<>();
-        for(int i=0;i<distinctedNums.length;i++){
-            for(int j=i+1;j<distinctedNums.length;j++){
-                for(int k=j+1;k<distinctedNums.length;k++){
-                    if ((distinctedNums[i]+distinctedNums[j]+distinctedNums[k])==0) {
-                        List<Integer> tuple=new ArrayList<>();
+        List<List<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < distinctedNums.length; i++) {
+            for (int j = i + 1; j < distinctedNums.length; j++) {
+                for (int k = j + 1; k < distinctedNums.length; k++) {
+                    if ((distinctedNums[i] + distinctedNums[j] + distinctedNums[k]) == 0) {
+                        List<Integer> tuple = new ArrayList<>();
                         tuple.add(distinctedNums[i]);
                         tuple.add(distinctedNums[j]);
                         tuple.add(distinctedNums[k]);
@@ -330,11 +334,12 @@ Explanation: 342 + 465 = 807.
         return res;
     }
 
+    //也是错误的，会有重复的问题
     public List<List<Integer>> threeSum2(int[] nums) {
-        List<List<Integer>> res=new ArrayList<>();
-        for(int first=0;first<nums.length-2;first++){
-            int target=-1*nums[first];
-            for(List<Integer> two:twoSum2(nums,first+1,nums.length-1,target)){
+        List<List<Integer>> res = new ArrayList<>();
+        for (int first = 0; first < nums.length - 2; first++) {
+            int target = -1 * nums[first];
+            for (List<Integer> two : twoSum2(nums, first + 1, nums.length - 1, target)) {
                 two.add(nums[first]);
                 res.add(two);
             }
@@ -342,20 +347,105 @@ Explanation: 342 + 465 = 807.
         return res;
     }
 
-    private List<List<Integer>> twoSum2(int[] nums,int l,int r, int target) {
-        List<List<Integer>> res=new ArrayList<>();
+    /*判断3元祖相同，方法是将其排序，按顺序判断其每个元素
+    * 因此，固定第一个数，直接跳过重复的数即可
+    * 当第一个数固定后，固定第二个数时，依然跳过重复的即可,
+    * 能够直接忽略重复元素，是因此第一次计算时即获得了所有可能，第二次计算重复时只能获得第一次计算时的子集，因此可直接跳过*/
+    public List<List<Integer>> threeSum3(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        int last=0;
+        boolean lastInited=false;
+        for (int first = 0; first < nums.length - 2; first++) {
+            if(!lastInited||last!=nums[first]){
+                int target = -1 * nums[first];
+                for (List<Integer> two : twoSum2(nums, first + 1, nums.length - 1, target)) {
+                    two.add(nums[first]);
+                    res.add(two);
+                }
+                last=nums[first];
+                lastInited=true;
+            }
+        }
+        return res;
+    }
+
+    //在nums[l,r]中寻找和是target的所有无重复二元组，不会用同一个元素两次,nums已排序
+    public List<List<Integer>> twoSum2(int[] nums, int l, int r, int target) {
+        List<List<Integer>> res = new ArrayList<>();
         Map<Integer, Integer> memo = new HashMap<>();
-        for (int i = l; i<=r; i++) {
+        int last =0;
+        boolean lastInited=false;
+        for (int i = l; i <= r; i++) {
             int num = nums[i];
             if (memo.containsKey(target - num)) {
-                List<Integer> tuple=new ArrayList<>();
-                tuple.add(nums[i]);
-                tuple.add(nums[memo.get(target - num)]);
-                res.add(tuple);
+                //固定一个数的时候，下次不能再固定同样的数
+                if (!lastInited || num != last) {
+                    List<Integer> tuple=new ArrayList<>();
+                    tuple.add(num);
+                    tuple.add(nums[memo.get(target - num)]);
+                    res.add(tuple);
+                    last=num;
+                    lastInited=true;
+                }
+            } else {
+                memo.put(num, i);
             }
-            memo.put(num, i);
         }
         /*not found*/
+        return res;
+    }
+
+    /**
+     * 16. 3Sum Closest
+     * 类似15题，用同样的思路,先固定一个数，将这个问题转换为两个数的和最接近某个值，
+     * 将最接近的保留下来
+     * 1.排序过滤掉重复元素,避免不必要的计算
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        boolean lastInited=false;
+        int last=0;
+        int res=0;
+        int min=Integer.MAX_VALUE;
+        for(int i=0;i<nums.length-2;i++){
+            int first=nums[i];
+            if(!lastInited||first!=last){
+                lastInited=true;
+                last=first;
+                int tct=target-first;
+                int tc=twoSumClosest(nums,i+1,nums.length-1,tct);
+                if(Math.abs(tct-tc)<min){
+                    res=tc+first;
+                    min=Math.abs(tct-tc);
+                }
+            }
+        }
+        return res;
+    }
+
+    //找和最接近target的两个数，用双指针
+    public int twoSumClosest(int[] nums, int l, int r, int target) {
+        int cur;
+        int res=0;
+        int minabs=Integer.MAX_VALUE;
+        do{
+            cur=nums[l]+nums[r];
+            int abs=Math.abs(target-cur);
+            if(abs<minabs){
+                res=cur;
+                minabs=abs;
+            }
+            //移动
+            if(target>cur){
+                l++;
+            }else{
+                r--;
+            }
+        } while(l<r&&cur!=target);
         return res;
     }
 }

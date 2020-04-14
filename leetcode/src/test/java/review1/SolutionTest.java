@@ -58,4 +58,28 @@ public class SolutionTest {
         int[] nums={-1, 0, 1, 2, -1, -4};
         System.out.println(sol.threeSum2(nums));
     }
+
+    @Test
+    public void testTwoSum2() {
+        int[] nums={0,0};
+        System.out.println(sol.twoSum2(nums,0,nums.length-1,0));
+    }
+
+    @Test
+    public void threeSum3() {
+        int[] nums={0,0,0,0};
+        System.out.println(sol.threeSum3(nums));
+    }
+
+    @Test
+    public void threeSumClosest() {
+        int[] nums={1,1,2,1};
+        System.out.println(sol.threeSumClosest(nums,3));
+    }
+
+    @Test
+    public void twoSumClosest() {
+        int[] nums={1,1,2};
+        System.out.println(sol.twoSumClosest(nums,1,2,3));
+    }
 }
