@@ -10,11 +10,11 @@ public class Close {
         String path="/Users/sakura/close.txt";
         File f=new File(path);
         FileOutputStream fo = new FileOutputStream(f);
-        for (int i = 0; i < 30; i++) {
-            fo.write((i + "abc\n").getBytes());
-            Thread.sleep(500);
-        }
-//        fo.close();
+            for (int i = 0; i < 30; i++) {
+                fo.write((i + "abc\n").getBytes());
+                Thread.sleep(500);
+            }
+            fo.close();
     }
 
     public static void main(String[] args) throws Exception {

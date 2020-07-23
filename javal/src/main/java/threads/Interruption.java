@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Interruption {
     public static void main(String[] args) throws InterruptedException, IOException {
-        IODemo();
+        IODemo2();
     }
 
     static void IODemo() throws InterruptedException {

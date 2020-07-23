@@ -1,10 +1,12 @@
 package generic;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 class Pair<U, V> {
-
+    static int a=0;
     U first;
     V second;
 
@@ -38,10 +40,13 @@ class Pair<U, V> {
 }
 
 public class 擦除 {
-
-    public static void main(String[] args) {
-        Pair<Integer,String> pair=new Pair<>(1,"abc");
-        Pair<String,String> pair2=new Pair<>("def","abc");
-        System.out.println(pair2.getClass().getSimpleName());
+    static Pair<Integer,String> pair1=new Pair<>(1,"abc");
+    public static void main(String[] args) throws Exception {
+        Pair<Integer,String> pair2=new Pair<>(1,"abc");
+        Type type1=pair1.getClass().getDeclaredField("first").getGenericType();
+        Type type2=pair2.getClass().getDeclaredField("first").getGenericType();
+        System.out.println(type1);
+        System.out.println(type2);
+//        Pair<String,String> pair2=new Pair<>("def","abc");
     }
 }

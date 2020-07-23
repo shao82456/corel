@@ -82,4 +82,30 @@ public class SolutionTest {
         int[] nums={1,1,2};
         System.out.println(sol.twoSumClosest(nums,1,2,3));
     }
+
+    @Test
+    public void letterCombinations() {
+        String digits="";
+        System.out.println(sol.letterCombinations(digits));
+    }
+
+    @Test
+    public void generateParenthesis() {
+        int n=0;
+        System.out.println(sol.generateParenthesis(n));
+    }
+
+    @Test
+    public void combinationSum() {
+        int[] candidates=new int[]{};
+        int target=10;
+        System.out.println(sol.combinationSum(candidates,target));
+    }
+
+    @Test
+    public void combinationSum2() {
+        int[] candidates=new int[]{10,1,2,7,6,1,5};
+        int target=8;
+        System.out.println(sol.combinationSum2(candidates,target));
+    }
 }

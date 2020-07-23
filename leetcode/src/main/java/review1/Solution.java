@@ -448,4 +448,127 @@ Explanation: 342 + 465 = 807.
         } while(l<r&&cur!=target);
         return res;
     }
+
+    /**
+     * 17. Letter Combinations of a Phone Number
+     * 排列组合类的题目，使用回溯
+     * @param digits
+     * @return
+     */
+    public List<String> letterCombinations(String digits) {
+        List<String> res=new ArrayList<>();
+        if(digits.length()==0){
+            return res;
+        }
+        String[] lettersMap=new String[]{"","","abc","def",
+        "ghi","jkl","mno","pqrs","tuv","wxyz"};
+        combineOne(digits,0,"",res,lettersMap);
+        return res;
+    }
+    private void combineOne(String digits,int start,String cur,List<String> res,String[] lettersMap) {
+        if(start==digits.length()){
+            res.add(cur);
+            return;
+        }
+        int digit=digits.charAt(start)-'0';
+        String letters=lettersMap[digit];
+        for(int i=0;i<letters.length();i++){
+            combineOne(digits,start+1,cur+letters.charAt(i),res,lettersMap);
+        }
+    }
+
+    /**
+     * 22. Generate Parentheses
+     * 求所有括号的组合，回溯解决
+     * 由于只有一种括号，容易进行剪枝
+     * @param n
+     * @return
+     */
+    public List<String> generateParenthesis(int n) {
+        List<String> res=new ArrayList<>();
+        if(n<=0){
+            return res;
+        }
+        char[] cur=new char[2*n];
+        generate(cur,0,res,0);
+        return res;
+    }
+
+    private void generate(char[] cur,int i,List<String> res,int ln){
+        if(i==cur.length){
+            res.add(new String(cur));
+            return;
+        }
+        int n=cur.length/2;
+        //当ln<n时，可以设置左括号
+        if(ln<n){
+            cur[i]='(';
+            generate(cur, i + 1, res, ln + 1);
+        }
+        //右括号数=i-ln,当其<ln时，可以设置右括号
+        if(i-ln<ln){
+            cur[i]=')';
+            generate(cur, i + 1, res, ln);
+        }
+    }
+
+    /**
+     * 39. Combination Sum
+     * 排列组合问题，回溯
+     * 参考
+     * https://leetcode.com/problems/combination-sum/discuss/16502/A-general-approach-to-backtracking-questions-in-Java-(Subsets-Permutations-Combination-Sum-Palindrome-Partitioning)
+     */
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> res=new ArrayList<>();
+        List<Integer> cur=new ArrayList<>();
+        combinationSum1(0,candidates,target,cur,res);
+        return res;
+    }
+
+    private void combinationSum1(int i,int[] candidates,int left,List<Integer> cur,List<List<Integer>> res){
+        if(left==0){
+            res.add(new ArrayList<>(cur));
+            return;
+        }
+        if(i==candidates.length){
+            return;
+        }
+        if(candidates[i]<=left){
+            cur.add(candidates[i]);
+            combinationSum1(i,candidates,left-candidates[i],cur,res);
+            cur.remove(cur.size()-1);
+        }
+        combinationSum1(i+1,candidates,left,cur,res);
+    }
+
+    /**
+     * 40. Combination Sum II
+     * 与上一题类似
+     * @param candidates
+     * @param target
+     * @return
+     */
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        List<List<Integer>> res=new ArrayList<>();
+        List<Integer> cur=new ArrayList<>();
+        combinationSum2(0,candidates,target,cur,res);
+        return res;
+    }
+
+    private void combinationSum2(int i,int[] candidates,int left,List<Integer> cur,List<List<Integer>> res){
+        if(left==0){
+            res.add(new ArrayList<>(cur));
+            return;
+        }
+        if(i==candidates.length){
+            return;
+        }
+        if(candidates[i]<=left){
+            cur.add(candidates[i]);
+            combinationSum2(i+1,candidates,left-candidates[i],cur,res);
+            cur.remove(cur.size()-1);
+        }
+        combinationSum2(i+1,candidates,left,cur,res);
+    }
 }

@@ -22,11 +22,7 @@ public class Array {
     }
     public static void main(String[] args) {
 //        testArayCopy();
-        List<Integer> ls=new ArrayList<>();
-        ls.addAll(Arrays.asList(1,2,3,4));
-        Iterator<Integer> it=ls.iterator();
-        while (it.hasNext()){
-            System.out.println(it.next());
-        }
+        int a=1<<30;
+        System.out.println(a);
     }
 }

@@ -11,7 +11,6 @@ public class UnsafeDemo {
 
     public static void main(String[] args) throws Exception {
         Unsafe unsafe = getUnsafeInstance();
-
         Field appleField = UnsafeDemo.class.getDeclaredField("apple");
         long appleOffset=unsafe.staticFieldOffset(appleField);
         System.out.println("Location of Apple: " + appleOffset);

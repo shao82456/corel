@@ -26,10 +26,10 @@ public class Main {
         ExecutorService es= Executors.newCachedThreadPool();
         es.execute(new DemoTask());
         es.execute(new DemoTask());
-        boolean terminated=es.awaitTermination(1, TimeUnit.MINUTES);
-        if(terminated){
-            System.out.println("QUIT");
-        }
+//        boolean terminated=es.awaitTermination(1, TimeUnit.MINUTES);
+//        if(terminated){
+//            System.out.println("QUIT");
+//        }
 
 
 //        es.shutdownNow();

@@ -5,7 +5,7 @@
 ### 标准选项
 所有的JVM实现都支持标准选项，他们用于一些常规操作，如检查JRE版本，设置环境变量，开启冗余输出等。
 
-#### 示例选项
+#### 示例
 **在示例选项中提到的选项会在下面再进行详细介绍，有兴趣的还可以跳转至参考文献中的官方文档**
 1. -client 客户端模式
 2. -Dproperty=value 设置系统属性
@@ -15,7 +15,7 @@
 ### 非标准选项
 这些选项通常Hotspot专用的，以-X开头  
 
-#### 示例选项
+#### 示例
 1. -Xbatch 取消后台编译
 1. -Xbootclasspath:path
 2. -Xloggc:filename 将GC事件记录至文件，无需额外再加-verbose:gc
@@ -27,7 +27,7 @@
 2. -XX:option=number 数字可以包含k或是K表示KB,m,g以此类推
 3. -XX:option=string
 
-#### 示例选项
+#### 示例
 1. -XX:+PrintGCDetails 每次GC打印详细message
 2. -XX:OnOutOfMemoryError=string 设置一些列命令，用分号分割
 3. -XX:ThreadStackSize=size
